@@ -1,0 +1,8 @@
+---
+- name: This is a pre-generated playbook
+  # Roles defined in the resource section of the configuration file can be used
+  # here
+  hosts: all
+  roles:
+    - common
+
