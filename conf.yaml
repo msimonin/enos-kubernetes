@@ -12,6 +12,7 @@ vagrant:
         number: 1
         networks: [n1]
 g5k:
+  env_name: debian9-x64-base
   resources:
     machines:
       - roles: [kube-node]
