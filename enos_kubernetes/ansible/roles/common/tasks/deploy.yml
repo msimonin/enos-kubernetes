@@ -1,3 +1,4 @@
-- name: Deploy tasks
-  debug:
-    msg: "Let's make enos-kubernetes awesome !"
+---
+# https://serverfault.com/questions/881517/why-disable-swap-on-kubernetes
+- name: Disable swap
+  command: swapoff -a
