@@ -6,9 +6,33 @@ import logging
 import os
 from subprocess import check_call
 
-from enos_kubernetes.constants import ANSIBLE_DIR
+from enos_kubernetes.constants import (ANSIBLE_DIR,
+                                       KUBESPRAY_VENV,
+                                       KUBESPRAY_PATH)
 
 logger = logging.getLogger(__name__)
+
+def check_call_in_venv(venv_dir, cmd):
+    """Calls command in a specific virtualenv."""
+
+    def check_venv(venv_path):
+
+        if not os.path.exists(venv_path):
+            check_call("virtualenv %s" % venv_path, shell=True)
+            check_call_in_venv(venv_dir, "pip install --upgrade pip")
+
+    logger.info("[%s] %s" % (venv_dir, cmd))
+    cmd_in_venv = []
+    cmd_in_venv.append(". %s/bin/activate " % venv_dir)
+    cmd_in_venv.append('&&')
+    cmd_in_venv.append(cmd)
+    check_venv(venv_dir)
+
+    return check_call(' '.join(cmd_in_venv), shell=True)
+
+
+def in_kubespray(cmd):
+    return check_call_in_venv(KUBESPRAY_VENV, cmd)
 
 
 @enostask(new=True)
@@ -50,7 +74,7 @@ def prepare(**kwargs):
                 env["inventory"], extra_vars=extra_vars)
 
 
-    kspray_path = os.path.join(env['resultdir'], 'kspray')
+    kspray_path = os.path.join(env['resultdir'], KUBESPRAY_PATH)
 
     logger.info("Remove previous Kubespray installation")
     check_call("rm -rf %s" % kspray_path, shell=True)
@@ -60,12 +84,11 @@ def prepare(**kwargs):
                 ("https://github.com/kubernetes-incubator/kubespray",
                 kspray_path),
                 shell=True)
-    check_call("cd %s && cp -rfp inventory/sample inventory/mycluster" % kspray_path, shell=True)
-    kspray_inventory_path = os.path.join(kspray_path, "inventory/mycluster/hosts.ini")
-    check_call("cd %s && cp %s %s" % (kspray_path, env["inventory"], kspray_inventory_path), shell=True)
-
-
-    check_call("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml" % kspray_path, shell=True)
+    in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
+    kspray_inventory_path = os.path.join(kspray_path, "inventory", "mycluster", "hosts.ini")
+    in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" % kspray_path)
+    in_kubespray("cd %s && cp %s %s" % (kspray_path, env["inventory"], kspray_inventory_path))
+    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml" % kspray_path)
 
 
 @enostask()

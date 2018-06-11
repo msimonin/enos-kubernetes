@@ -6,3 +6,6 @@ ROOT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
 ANSIBLE_DIR = os.path.join(ROOT_PATH, "ansible")
 
 CONF = os.path.join(os.getcwd(), "conf.yaml")
+
+KUBESPRAY_VENV = os.path.join(ROOT_PATH, "current", "kubespray-venv")
+KUBESPRAY_PATH = "kubespray"
