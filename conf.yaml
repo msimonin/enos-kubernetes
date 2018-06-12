@@ -1,9 +1,11 @@
 ---
+vars:
+  kube_token_auth: True
 vagrant:
   backend: virtualbox
   resources:
     machines:
-      - roles: [kube-node]
+      - roles: [kube-node, k8s-cluster]
         flavor: tiny
         number: 1
         networks: [n1]
@@ -13,9 +15,10 @@ vagrant:
         networks: [n1]
 g5k:
   env_name: debian9-x64-base
+  walltime: 05:00:00
   resources:
     machines:
-      - roles: [kube-node]
+      - roles: [kube-node, k8s-cluster]
         cluster: parasilo
         nodes: 1
         primary_network: n1

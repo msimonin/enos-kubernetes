@@ -5,6 +5,7 @@ from enoslib.infra.enos_vagrant.provider import Enos_vagrant
 import logging
 import os
 from subprocess import check_call
+import yaml
 
 from enos_kubernetes.constants import (ANSIBLE_DIR,
                                        KUBESPRAY_VENV,
@@ -88,7 +89,15 @@ def prepare(**kwargs):
     kspray_inventory_path = os.path.join(kspray_path, "inventory", "mycluster", "hosts.ini")
     in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" % kspray_path)
     in_kubespray("cd %s && cp %s %s" % (kspray_path, env["inventory"], kspray_inventory_path))
-    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml" % kspray_path)
+
+
+    # Dumping overriden vars
+    extra_vars_file = os.path.join(env["resultdir"], "extra_vars.yaml")
+    with open(extra_vars_file, "w") as f:
+        f.write(yaml.dump(env["config"].get("vars", {})))
+
+
+    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -e %s" % (kspray_path, extra_vars_file))
 
 
 @enostask()
