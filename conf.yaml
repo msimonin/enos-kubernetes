@@ -1,6 +1,6 @@
 ---
 vars:
-  kube_token_auth: True
+  kubelet_max_pods: 110
 vagrant:
   backend: libvirt
   box: generic/debian9
@@ -16,7 +16,8 @@ vagrant:
         networks: [n1]
 g5k:
   env_name: debian9-x64-base
-  walltime: 05:00:00
+  walltime: 03:30:00
+  job_type: allow_classic_ssh
   resources:
     machines:
       - roles: [kube-node, k8s-cluster]

@@ -21,6 +21,7 @@ def check_call_in_venv(venv_dir, cmd):
         if not os.path.exists(venv_path):
             check_call("virtualenv %s" % venv_path, shell=True)
             check_call_in_venv(venv_dir, "pip install --upgrade pip")
+            check_call_in_venv(venv_dir, "pip install ansible==2.4.6.0")
 
     logger.info("[%s] %s" % (venv_dir, cmd))
     cmd_in_venv = []
@@ -78,14 +79,14 @@ def prepare(**kwargs):
     kspray_path = os.path.join(env['resultdir'], KUBESPRAY_PATH)
 
     logger.info("Remove previous Kubespray installation")
-    check_call("rm -rf %s" % kspray_path, shell=True)
+#    check_call("rm -rf %s" % kspray_path, shell=True)
 
     logger.info("Cloning Kubespray repository...")
-    check_call("git clone --depth 1 --branch v2.6.0 --single-branch --quiet %s %s" %
-                ("https://github.com/kubernetes-incubator/kubespray",
-                kspray_path),
-                shell=True)
-    in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
+#    check_call("git clone --depth 1 --branch v2.6.0 --single-branch --quiet %s %s" %
+#                ("https://github.com/kubernetes-incubator/kubespray",
+#                kspray_path),
+#                shell=True)
+#    in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
     kspray_inventory_path = os.path.join(kspray_path, "inventory", "mycluster", "hosts.ini")
     in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" % kspray_path)
     in_kubespray("cd %s && cp %s %s" % (kspray_path, env["inventory"], kspray_inventory_path))
@@ -101,6 +102,15 @@ def prepare(**kwargs):
 
 
 @enostask()
+def post_install(**kwargs):
+    env = kwargs["env"]
+    extra_vars = {
+        "enos_action": "post-install"
+    }
+    run_ansible([os.path.join(ANSIBLE_DIR, "post_install.yml")],
+                env["inventory"], extra_vars=extra_vars)
+
+@enostask()
 def backup(**kwargs):
     env = kwargs["env"]
     extra_vars = {
@@ -113,10 +123,7 @@ def backup(**kwargs):
 @enostask()
 def destroy(**kwargs):
     env = kwargs["env"]
-    extra_vars = {
-        "enos_action": "destroy"
-    }
-    run_ansible([os.path.join(ANSIBLE_DIR, "site.yml")],
+    run_ansible([os.path.join(ANSIBLE_DIR, "post_install.yml")],
                 env["inventory"], extra_vars=extra_vars)
 
 

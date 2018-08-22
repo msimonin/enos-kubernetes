@@ -67,6 +67,13 @@ def prepare(env):
     t.prepare(env=env)
 
 
+@cli.command(help="Post install the deployement")
+@click.option("--env",
+              help="alternative environment directory")
+def post_install(env):
+    t.post_install(env=env)
+
+
 @cli.command(help="Backup the deployed environment")
 @click.option("--env",
               help="alternative environment directory")
