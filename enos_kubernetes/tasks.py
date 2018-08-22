@@ -81,7 +81,7 @@ def prepare(**kwargs):
     check_call("rm -rf %s" % kspray_path, shell=True)
 
     logger.info("Cloning Kubespray repository...")
-    check_call("git clone --depth 1 --branch v2.5.0 --single-branch --quiet %s %s" %
+    check_call("git clone --depth 1 --branch v2.6.0 --single-branch --quiet %s %s" %
                 ("https://github.com/kubernetes-incubator/kubespray",
                 kspray_path),
                 shell=True)

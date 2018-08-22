@@ -2,7 +2,8 @@
 vars:
   kube_token_auth: True
 vagrant:
-  backend: virtualbox
+  backend: libvirt
+  box: generic/debian9
   resources:
     machines:
       - roles: [kube-node, k8s-cluster]
