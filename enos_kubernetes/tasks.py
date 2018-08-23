@@ -82,11 +82,11 @@ def prepare(**kwargs):
 #    check_call("rm -rf %s" % kspray_path, shell=True)
 
     logger.info("Cloning Kubespray repository...")
-#    check_call("git clone --depth 1 --branch v2.6.0 --single-branch --quiet %s %s" %
-#                ("https://github.com/kubernetes-incubator/kubespray",
-#                kspray_path),
-#                shell=True)
-#    in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
+    check_call("git clone --depth 1 --branch fix-3164 --single-branch --quiet %s %s" %
+                ("https://github.com/msimonin/kubespray",
+                kspray_path),
+                shell=True)
+    in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
     kspray_inventory_path = os.path.join(kspray_path, "inventory", "mycluster", "hosts.ini")
     in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" % kspray_path)
     in_kubespray("cd %s && cp %s %s" % (kspray_path, env["inventory"], kspray_inventory_path))
@@ -109,6 +109,16 @@ def post_install(**kwargs):
     }
     run_ansible([os.path.join(ANSIBLE_DIR, "post_install.yml")],
                 env["inventory"], extra_vars=extra_vars)
+
+@enostask()
+def hints(**kwargs):
+    env = kwargs["env"]
+    master = env["roles"]["kube-master"][0].address
+    print("|\n"*5)
+    print("HINTS:")
+    dashboard_url = "https://{}:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login"
+    print(dashboard_url.format(master))
+    print("|\n"*5)
 
 @enostask()
 def backup(**kwargs):

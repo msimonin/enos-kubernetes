@@ -72,6 +72,7 @@ def prepare(env):
               help="alternative environment directory")
 def post_install(env):
     t.post_install(env=env)
+    t.hints(env=env)
 
 
 @cli.command(help="Backup the deployed environment")
