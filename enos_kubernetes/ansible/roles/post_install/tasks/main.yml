@@ -1,0 +1,21 @@
+---
+# NOTE(msimonin): It seems there's no endpoint for managing RBACs using Ansible
+# We fall back to a remote command execution
+- name: Enabling the dashboard
+  copy:
+    src: dashboard/admin-serviceaccount.yaml
+    dest: admin-serviceaccount.yaml
+
+- name: Creating the RBAC rules for the dashboard
+  shell: >
+    kubectl get clusterrolebinding kubernetes-dashboard || kubectl create -f admin-serviceaccount.yaml
+
+# NOTE(msimonin): Example on how to create custom resources on the kubernetes cluster
+# - name: Creating the nfs persistance volume and claim
+#   kubernetes:
+#     api_endpoint: 127.0.0.1:8080
+#     insecure: yes
+#     state: present
+#     file_reference: "{{ item }}"
+#   with_fileglob:
+#     - "nfs/*.yaml"

@@ -1,0 +1,8 @@
+---
+- name: Post-install
+  # Roles defined in the resource section of the configuration file can be used
+  # here
+  hosts: kube-master
+  roles:
+    - post_install
+
