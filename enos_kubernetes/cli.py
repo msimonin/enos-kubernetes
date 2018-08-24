@@ -75,6 +75,13 @@ def post_install(env):
     t.hints(env=env)
 
 
+@cli.command(help="Give some hints on the deployment")
+@click.option("--env",
+              help="alternative environment directory")
+def hints(env):
+    t.hints(env=env)
+
+
 @cli.command(help="Backup the deployed environment")
 @click.option("--env",
               help="alternative environment directory")

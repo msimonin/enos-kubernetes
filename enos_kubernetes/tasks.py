@@ -13,6 +13,7 @@ from enos_kubernetes.constants import (ANSIBLE_DIR,
 
 logger = logging.getLogger(__name__)
 
+
 def check_call_in_venv(venv_dir, cmd):
     """Calls command in a specific virtualenv."""
 
@@ -75,30 +76,37 @@ def prepare(**kwargs):
     run_ansible([os.path.join(ANSIBLE_DIR, "site.yml")],
                 env["inventory"], extra_vars=extra_vars)
 
-
     kspray_path = os.path.join(env['resultdir'], KUBESPRAY_PATH)
 
     logger.info("Remove previous Kubespray installation")
     check_call("rm -rf %s" % kspray_path, shell=True)
 
     logger.info("Cloning Kubespray repository...")
-    check_call("git clone --depth 1 --branch fix-3164 --single-branch --quiet %s %s" %
-                ("https://github.com/msimonin/kubespray",
-                kspray_path),
-                shell=True)
-    in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
-    kspray_inventory_path = os.path.join(kspray_path, "inventory", "mycluster", "hosts.ini")
-    in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" % kspray_path)
-    in_kubespray("cd %s && cp %s %s" % (kspray_path, env["inventory"], kspray_inventory_path))
+    check_call("git clone --depth 1 --single-branch --quiet %s %s" % (
+        "https://github.com/kubernetes-incubator/kubespray",
+        kspray_path),
+        shell=True)
 
+    in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
+    kspray_inventory_path = os.path.join(kspray_path,
+                                         "inventory",
+                                         "mycluster",
+                                         "hosts.ini")
+
+    in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" %
+                 kspray_path)
+    in_kubespray("cd %s && cp %s %s" % (kspray_path,
+                                        env["inventory"],
+                                        kspray_inventory_path))
 
     # Dumping overriden vars
     extra_vars_file = os.path.join(env["resultdir"], "extra_vars.yaml")
     with open(extra_vars_file, "w") as f:
         f.write(yaml.dump(env["config"].get("vars", {})))
 
-
-    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -e @%s" % (kspray_path, extra_vars_file))
+    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini"
+                 " "
+                 "cluster.yml -e @%s" % (kspray_path, extra_vars_file))
 
 
 @enostask()
@@ -110,15 +118,29 @@ def post_install(**kwargs):
     run_ansible([os.path.join(ANSIBLE_DIR, "post_install.yml")],
                 env["inventory"], extra_vars=extra_vars)
 
+
 @enostask()
 def hints(**kwargs):
     env = kwargs["env"]
     master = env["roles"]["kube-master"][0].address
-    print("|\n"*5)
-    print("HINTS:")
-    dashboard_url = "https://{}:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login"
-    print(dashboard_url.format(master))
-    print("|\n"*5)
+    hints = []
+    hints.append("dashboard url : https://{}:6443/api/v1/namespaces/"
+                 "kube-system/services/https:kubernetes-dashboard:/"
+                 "proxy/#!/login".format(master))
+
+    hints.append("start the proxy on {} : kubectl proxy --address='0.0.0.0'"
+                 "--accept-hosts='.*'".format(master))
+
+    hints.append("dashboard url proxy : http://{}:8001/api/v1/namespaces/"
+                 "kube-system/services/https:kubernetes-dashboard:"
+                 "/proxy/#!/login".format(master))
+
+    for hint in hints:
+        print("{:->80}".format(""))
+        print(hint)
+    else:
+        print("{:->80}".format(""))
+
 
 @enostask()
 def backup(**kwargs):
@@ -143,5 +165,3 @@ PROVIDERS = {
     #    "static": static
     #    "chameleon": chameleon
 }
-
-
