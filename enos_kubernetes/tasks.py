@@ -79,7 +79,7 @@ def prepare(**kwargs):
     kspray_path = os.path.join(env['resultdir'], KUBESPRAY_PATH)
 
     logger.info("Remove previous Kubespray installation")
-#    check_call("rm -rf %s" % kspray_path, shell=True)
+    check_call("rm -rf %s" % kspray_path, shell=True)
 
     logger.info("Cloning Kubespray repository...")
     check_call("git clone --depth 1 --branch fix-3164 --single-branch --quiet %s %s" %
@@ -98,7 +98,7 @@ def prepare(**kwargs):
         f.write(yaml.dump(env["config"].get("vars", {})))
 
 
-    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -e %s" % (kspray_path, extra_vars_file))
+    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml -e @%s" % (kspray_path, extra_vars_file))
 
 
 @enostask()
