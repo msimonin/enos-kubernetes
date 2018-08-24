@@ -1,0 +1,12 @@
+---
+# NOTE(msimonin): It seems there's no endpoint for managing RBACs using Ansible
+# We fall back to a remote command execution
+- name: Enabling the dashboard
+  copy:
+    src: dashboard/admin-serviceaccount.yaml
+    dest: admin-serviceaccount.yaml
+
+- name: Creating the RBAC rules for the dashboard
+  shell: >
+    kubectl get clusterrolebinding kubernetes-dashboard || kubectl create -f admin-serviceaccount.yaml
+

@@ -1,0 +1,20 @@
+---
+- name: Adding coreos repository to helm
+  shell: |
+    helm repo remove coreos
+    helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/
+
+- name: Starting prometheus-operator
+  shell: >
+    helm list | grep prometheus-operator
+    ||
+    helm install coreos/prometheus-operator --name prometheus-operator --namespace monitoring
+
+- name: Starting kube-prometheus
+  shell: >
+    helm list | grep kube-prometheus
+    ||
+    helm install coreos/kube-prometheus --name kube-prometheus --set global.rbacEnable=true --namespace monitoring
+
+- name: Set default ROOT_URL for grafana
+  shell: "kubectl set env deployment/kube-prometheus-grafana GF_SERVER_ROOT_URL='http://{{ master }}:8001/api/v1/namespaces/monitoring/services/kube-prometheus-grafana:80/proxy/' -n monitoring"

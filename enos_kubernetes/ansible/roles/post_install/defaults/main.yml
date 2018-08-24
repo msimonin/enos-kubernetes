@@ -1,0 +1,2 @@
+---
+master: "{{ groups['kube-master'][0] }}"

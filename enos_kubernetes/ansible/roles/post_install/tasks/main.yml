@@ -1,14 +1,14 @@
 ---
-# NOTE(msimonin): It seems there's no endpoint for managing RBACs using Ansible
-# We fall back to a remote command execution
-- name: Enabling the dashboard
-  copy:
-    src: dashboard/admin-serviceaccount.yaml
-    dest: admin-serviceaccount.yaml
+# Starting the proxy
+- name: Starting the proxy
+  shell: "nohup kubectl proxy --address='0.0.0.0' --accept-hosts='.*' >&- 2>&- <&- &"
 
-- name: Creating the RBAC rules for the dashboard
-  shell: >
-    kubectl get clusterrolebinding kubernetes-dashboard || kubectl create -f admin-serviceaccount.yaml
+# Assuming that the dashboard is always deployed
+- include: dashboard.yml
+
+# The monitoring stack deployment depends on Helm to be present
+- include: monitoring.yml
+  when: helm_enabled
 
 # NOTE(msimonin): Example on how to create custom resources on the kubernetes cluster
 # - name: Creating the nfs persistance volume and claim

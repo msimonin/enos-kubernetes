@@ -9,7 +9,8 @@ import yaml
 
 from enos_kubernetes.constants import (ANSIBLE_DIR,
                                        KUBESPRAY_VENV,
-                                       KUBESPRAY_PATH)
+                                       KUBESPRAY_PATH,
+                                       DEFAULT_K_VARS)
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,13 @@ def check_call_in_venv(venv_dir, cmd):
 
 def in_kubespray(cmd):
     return check_call_in_venv(KUBESPRAY_VENV, cmd)
+
+
+def update_k_vars(k_vars):
+    """Update unspeified keys in k_vars with the defaults"""
+    for k, v in DEFAULT_K_VARS.items():
+        if k not in k_vars:
+            k_vars[k] = v
 
 
 @enostask(new=True)
@@ -99,6 +107,8 @@ def prepare(**kwargs):
                                         env["inventory"],
                                         kspray_inventory_path))
 
+    k_vars = env["config"].get("vars", {})
+    update_k_vars(k_vars)
     # Dumping overriden vars
     extra_vars_file = os.path.join(env["resultdir"], "extra_vars.yaml")
     with open(extra_vars_file, "w") as f:
@@ -115,6 +125,9 @@ def post_install(**kwargs):
     extra_vars = {
         "enos_action": "post-install"
     }
+    # Adding the k vars
+    extra_vars.update(env["config"].get("vars", {}))
+
     run_ansible([os.path.join(ANSIBLE_DIR, "post_install.yml")],
                 env["inventory"], extra_vars=extra_vars)
 
@@ -133,6 +146,10 @@ def hints(**kwargs):
 
     hints.append("dashboard url proxy : http://{}:8001/api/v1/namespaces/"
                  "kube-system/services/https:kubernetes-dashboard:"
+                 "/proxy/#!/login".format(master))
+
+    hints.append("Grafana dashboard: http://{}:8001/api/v1/namespaces/"
+                 "monitoring/services/kube-prometheus-grafana:80"
                  "/proxy/#!/login".format(master))
 
     for hint in hints:
