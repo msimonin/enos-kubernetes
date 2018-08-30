@@ -17,16 +17,19 @@ g5k:
   env_name: debian9-x64-base
   walltime: 03:30:00
   job_type: allow_classic_ssh
+  job_name: enos-kubernetes
   resources:
     machines:
       - roles: [kube-node, k8s-cluster]
-        cluster: parasilo
-        nodes: 1
+        cluster: paranoia
+        nodes: 3
+        min: 1
         primary_network: n1
         secondary_networks: []
       - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
-        cluster: parasilo
+        cluster: paranoia
         nodes: 1
+        min: 1
         primary_network: n1
         secondary_networks: []
     networks:

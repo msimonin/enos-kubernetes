@@ -53,7 +53,7 @@ def g5k(config, force, env=None, **kwargs):
     env["config"] = config
     env["roles"] = roles
     env["networks"] = networks
-
+    env["context"] = "g5k"
 
 @enostask(new=True)
 def vagrant(config, force, env=None, **kwargs):
@@ -62,6 +62,7 @@ def vagrant(config, force, env=None, **kwargs):
     env["config"] = config
     env["roles"] = roles
     env["networks"] = networks
+    env["context"] = "vagrant"
 
 
 @enostask()
@@ -79,7 +80,8 @@ def prepare(**kwargs):
 
     # common tasks
     extra_vars = {
-        "enos_action": "deploy"
+        "enos_action": "deploy",
+        "context": env["context"]
     }
     run_ansible([os.path.join(ANSIBLE_DIR, "site.yml")],
                 env["inventory"], extra_vars=extra_vars)

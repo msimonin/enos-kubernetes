@@ -1,0 +1,13 @@
+---
+- name: Create a data dir in /tmp for docker*
+  file:
+    state: directory
+    path: /tmp/docker
+
+- name: Create a data dir in /var/lib for docker*
+  file:
+    state: directory
+    path: /var/lib/docker
+
+- name: Bind mount the docker data dir in /tmp
+  shell: (mount | grep /tmp/docker) || mount --bind /tmp/docker /var/lib/docker

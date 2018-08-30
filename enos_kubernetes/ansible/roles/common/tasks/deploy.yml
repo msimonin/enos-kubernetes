@@ -12,3 +12,6 @@
   pip:
     name: openshift
     state: present
+
+- include: "g5k.yml"
+  when: context == "g5k"
