@@ -1,13 +1,19 @@
 from enoslib.api import generate_inventory, run_ansible
 from enoslib.task import enostask
+from enoslib.infra.enos_g5k.configuration import Configuration as G5kConf
 from enoslib.infra.enos_g5k.provider import G5k
+from enoslib.infra.enos_vagrant.configuration import Configuration as VagrantConf
 from enoslib.infra.enos_vagrant.provider import Enos_vagrant
+from enoslib.infra.enos_vmong5k.configuration import Configuration as VMonG5kConf
+from enoslib.infra.enos_vmong5k.provider import VMonG5k
 import logging
 import os
 from subprocess import check_call
 import yaml
 
 from enos_kubernetes.constants import (ANSIBLE_DIR,
+                                       KUBESPRAY_URL,
+                                       KUBESPRAY_VERSION,
                                        KUBESPRAY_VENV,
                                        KUBESPRAY_PATH,
                                        DEFAULT_K_VARS)
@@ -48,21 +54,35 @@ def update_k_vars(k_vars):
 
 @enostask(new=True)
 def g5k(config, force, env=None, **kwargs):
-    provider = G5k(config["g5k"])
+    conf = G5kConf.from_dictionnary(config["g5k"])
+    provider = G5k(conf)
     roles, networks = provider.init(force_deploy=force)
     env["config"] = config
     env["roles"] = roles
     env["networks"] = networks
     env["context"] = "g5k"
 
+
 @enostask(new=True)
 def vagrant(config, force, env=None, **kwargs):
-    provider = Enos_vagrant(config["vagrant"])
+    conf = VagrantConf.from_dictionnary(config["vagrant"])
+    provider = Enos_vagrant(conf)
     roles, networks = provider.init(force_deploy=force)
     env["config"] = config
     env["roles"] = roles
     env["networks"] = networks
     env["context"] = "vagrant"
+
+
+@enostask(new=True)
+def vmong5k(config, force, env=None, **kwargs):
+    conf = VMonG5kConf.from_dictionnary(config["vmong5k"])
+    provider = VMonG5k(conf)
+    roles, networks = provider.init(force_deploy=force)
+    env["config"] = config
+    env["roles"] = roles
+    env["networks"] = networks
+    env["context"] = "vmong5k"
 
 
 @enostask()
@@ -92,9 +112,10 @@ def prepare(**kwargs):
     check_call("rm -rf %s" % kspray_path, shell=True)
 
     logger.info("Cloning Kubespray repository...")
-    check_call("git clone --depth 1 --single-branch --quiet %s %s" % (
-        "https://github.com/kubernetes-incubator/kubespray",
-        kspray_path),
+    check_call("git clone -b {ref} --depth 1 --single-branch --quiet {url} {dest}".format(
+        ref=KUBESPRAY_VERSION,
+        url=KUBESPRAY_URL, 
+        dest=kspray_path),
         shell=True)
 
     in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
@@ -181,6 +202,7 @@ def destroy(**kwargs):
 PROVIDERS = {
     "g5k": g5k,
     "vagrant": vagrant,
+    "vmong5k": vmong5k
     #    "static": static
     #    "chameleon": chameleon
 }

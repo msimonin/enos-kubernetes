@@ -15,19 +15,19 @@ vagrant:
         networks: [n1]
 g5k:
   env_name: debian9-x64-base
-  walltime: 03:30:00
+  walltime: 04:00:00
   job_type: allow_classic_ssh
   job_name: enos-kubernetes
   resources:
     machines:
       - roles: [kube-node, k8s-cluster]
-        cluster: paranoia
+        cluster: paravance
         nodes: 3
         min: 1
         primary_network: n1
         secondary_networks: []
       - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
-        cluster: paranoia
+        cluster: paravance
         nodes: 1
         min: 1
         primary_network: n1
@@ -35,5 +35,19 @@ g5k:
     networks:
       - id: n1
         type: prod
-        role: my_network
+        roles: ["my_network"]
         site: rennes
+vmong5k:
+  walltime: 04:00:00
+  job_name: enos-kubernetes-vms
+  resources:
+    machines:
+      - roles: [kube-node, k8s-cluster]
+        cluster: paravance
+        number: 3
+        flavour: medium
+      - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
+        cluster: paravance
+        number: 1
+        flavour: large
+    networks: ["my_network"]
