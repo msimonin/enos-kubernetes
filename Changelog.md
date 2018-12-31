@@ -1,3 +1,11 @@
+# 0.0.4
+
+- Update to enoslib2
+
+# 0.0.3
+
+- Update to enoslib2
+
 # 0.0.2
 
 - Add openshift client 
