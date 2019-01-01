@@ -29,7 +29,6 @@ def check_call_in_venv(venv_dir, cmd):
         if not os.path.exists(venv_path):
             check_call("virtualenv %s" % venv_path, shell=True)
             check_call_in_venv(venv_dir, "pip install --upgrade pip")
-            check_call_in_venv(venv_dir, "pip install ansible==2.4.6.0")
 
     logger.info("[%s] %s" % (venv_dir, cmd))
     cmd_in_venv = []
