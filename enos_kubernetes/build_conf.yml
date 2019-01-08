@@ -1,0 +1,32 @@
+---
+vars: {}
+vmong5k:
+  walltime: 02:00:00
+  job_name: enos-kubernetes-build-vmong5k
+  resources:
+    machines:
+      - roles: [kube-node, k8s-cluster, etcd, kube-master, kube-ingress, vault]
+        cluster: paravance
+        number: 1
+        flavour_desc :
+          core: 16
+          mem: 12288
+    networks: ["my_network"]
+g5k:
+  env_name: debian9-x64-nfs
+  walltime: 04:00:00
+  job_name: enos-kubernetes-build-g5k
+  resources:
+    machines:
+      - roles: [kube-node, k8s-cluster, etcd, kube-master, kube-ingress, vault]
+        cluster: paravance
+        nodes: 1
+        min: 1
+        primary_network: n1
+        secondary_networks: []
+    networks:
+      - id: n1
+        type: prod
+        roles: ["my_network"]
+        site: rennes
+ 

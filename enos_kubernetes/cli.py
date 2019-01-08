@@ -25,10 +25,12 @@ def load_config(file_path):
     return configuration
 
 
-def load_build_conf(cluster=DEFAULT_BUILD_CLUSTER):
+def load_build_conf(provider, cluster=DEFAULT_BUILD_CLUSTER):
     conf = load_config(BUILD_CONF_PATH)
     # yeah, that smells
-    conf["vmong5k"]["resources"]["machines"][0]["cluster"] = cluster
+    provider_conf = conf[provider]
+    if provider == "g5k" or provider == "vmong5k":
+        provider_conf["resources"]["machines"][0]["cluster"] = cluster
     return conf
 
 
@@ -130,18 +132,15 @@ def deploy(provider, force, conf, env):
 
 
 @cli.command(help="Preconfigure a machine with all the dependency. only vmong5k for now")
+@click.argument("provider")
 @click.option("--cluster",
               default=DEFAULT_BUILD_CLUSTER,
               help="cluster to use for building the base image")
-def build(cluster):
-    provider = "vmong5k"
+def build(provider, cluster):
     force = False
-    t.PROVIDERS[provider](load_build_conf(cluster=cluster), force)
+    t.PROVIDERS[provider](load_build_conf(provider, cluster=cluster), force)
     t.inventory()
     t.prepare()
     t.reset()
-    print("To save the environment, you still need to retrieve the base disk"
-          "Go to the physical machine"
-          "Shutdown the vm (virsh shutdown xxx"
-          "Commit the disk"
-          "Save in in your home dir")
+    print("To save the environment, you still need to retrieve the base disk \n"
+          "That depends on the provider")
