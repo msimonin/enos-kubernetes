@@ -9,8 +9,8 @@ evaluation/experimental purpose (not production).
 Behind the scenes this project uses:
 
 * Kubespray (https://github.com/kubernetes-sigs/kubespray): It uses decent
-  defaults values but this should be reasonnable customizable (through roles
-  and vars in the configuration file)
+  default values but this should be reasonnably customizable (through roles and
+  vars in the configuration file)
 
 * EnOSlib (https://gitlab.inria.fr/discovery/enoslib) for the framework part.
 
