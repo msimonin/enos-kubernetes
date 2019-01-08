@@ -69,6 +69,17 @@ Build a base image on vmong5k with an alternative cluster::
 
     ek build vmong5k --cluster=chetemi
 
+This also can be used from python directly using the provided API::
+
+    # pseudo-code to deploy to g5k
+    from enos_kubernetes import tasks
+
+    ...
+    tasks.g5k(...)
+    tasks.inventory(...)
+    tasks.prepare(...)
+    ...
+
 
 
 .. |Build Status| image:: https://gitlab.inria.fr/msimonin/enos-Kubernetes/badges/master/pipeline.svg
@@ -79,3 +90,4 @@ Build a base image on vmong5k with an alternative cluster::
 
 .. |Pypi| image:: https://badge.fury.io/py/enos-kubernetes.svg
    :target: https://badge.fury.io/py/enos-kubernetes
+
