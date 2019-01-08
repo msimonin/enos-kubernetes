@@ -1,14 +1,17 @@
-Welcome to enos-kubernetes' documentation!
-==========================================
+
+enos-kubernetes
+===============
 
 Deploys Kubernetes on various providers. Deployments are for
 evaluation/experimental purpose (not production).
 
-.. hint ::
+Behind the scenes this project uses:
 
-    The source code is available at
-    https://gitlab.inria.fr/msimonin/enos-kubernetes
+* Kubespray (https://github.com/kubernetes-sigs/kubespray): It uses decent
+  defaults values but this should be reasonnable customizable (through roles
+  and vars in the configuration file)
 
+* EnOSlib (https://gitlab.inria.fr/discovery/enoslib) for the framework part.
 
 Command line overview
 ---------------------
