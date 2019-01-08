@@ -20,3 +20,6 @@ DEFAULT_K_VARS = {
     "helm_enabled": True,
     "etcd_deployment_type": "docker",
 }
+
+BUILD_CONF_PATH = os.path.join(ROOT_PATH, "build_conf.yml")
+DEFAULT_BUILD_CLUSTER = "parasilo"

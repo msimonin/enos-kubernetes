@@ -3,7 +3,8 @@ import logging
 import yaml
 
 import enos_kubernetes.tasks as t
-from enos_kubernetes.constants import CONF
+from enos_kubernetes.constants import (CONF, BUILD_CONF_PATH,
+                                       DEFAULT_BUILD_CLUSTER)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -22,6 +23,14 @@ def load_config(file_path):
     with open(file_path) as f:
         configuration = yaml.safe_load(f)
     return configuration
+
+
+def load_build_conf(cluster=DEFAULT_BUILD_CLUSTER):
+    conf = load_config(BUILD_CONF_PATH)
+    # yeah, that smells
+    conf["vmong5k"]["resources"]["machines"][0]["cluster"] = cluster
+    return conf
+
 
 
 @cli.command(help="Claim resources on Grid'5000 (frontend).")
@@ -96,6 +105,13 @@ def destroy(env):
     t.destroy(env=env)
 
 
+@cli.command(help="Resets Kubernetes (see kspray doc)")
+@click.option("--env",
+              help="alternative environment directory")
+def reset(env):
+    t.reset(env=env)
+
+
 @cli.command(help="Claim resources from a PROVIDER and configure them.")
 @click.argument("provider")
 @click.option("--force",
@@ -111,3 +127,21 @@ def deploy(provider, force, conf, env):
     t.PROVIDERS[provider](config, force, env=env)
     t.inventory()
     t.prepare(env=env)
+
+
+@cli.command(help="Preconfigure a machine with all the dependency. only vmong5k for now")
+@click.option("--cluster",
+              default=DEFAULT_BUILD_CLUSTER,
+              help="cluster to use for building the base image")
+def build(cluster):
+    provider = "vmong5k"
+    force = False
+    t.PROVIDERS[provider](load_build_conf(cluster=cluster), force)
+    t.inventory()
+    t.prepare()
+    t.reset()
+    print("To save the environment, you still need to retrieve the base disk"
+          "Go to the physical machine"
+          "Shutdown the vm (virsh shutdown xxx"
+          "Commit the disk"
+          "Save in in your home dir")

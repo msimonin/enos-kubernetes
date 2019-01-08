@@ -41,14 +41,13 @@ g5k:
 vmong5k:
   walltime: 04:00:00
   job_name: enos-kubernetes-vms
+  image: /home/msimonin/public/ek-base-image.qcow2
   resources:
     machines:
-      - roles: [kube-node, k8s-cluster]
-        cluster: paravance
-        number: 3
-        flavour: medium
-      - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
+      - roles: [kube-node, k8s-cluster, etcd, kube-master, kube-ingress, vault]
         cluster: paravance
         number: 1
-        flavour: large
+        flavour_desc :
+          core: 16
+          mem: 12288
     networks: ["my_network"]

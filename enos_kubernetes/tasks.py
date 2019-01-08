@@ -1,4 +1,4 @@
-from enoslib.api import generate_inventory, run_ansible
+from enoslib.api import generate_inventory, run_ansible, run_command
 from enoslib.task import enostask
 from enoslib.infra.enos_g5k.configuration import Configuration as G5kConf
 from enoslib.infra.enos_g5k.provider import G5k
@@ -189,6 +189,14 @@ def backup(**kwargs):
     }
     run_ansible([os.path.join(ANSIBLE_DIR, "site.yml")],
                 env["inventory"], extra_vars=extra_vars)
+
+@enostask()
+def reset(**kwargs):
+    env = kwargs["env"]
+    kspray_path = os.path.join(env['resultdir'], KUBESPRAY_PATH)
+    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini"
+                 " "
+                 "reset.yml" % (kspray_path))
 
 
 @enostask()
