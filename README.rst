@@ -43,11 +43,13 @@ Usage overview
 
 Install the project::
 
+    virtualenv -p python3 venv
+    source venv/bin/activate
     pip install enos-kubernetes
 
 Get a sample configuration file at::
 
-    wget https://gitlab.inria.fr/msimonin/enos-kubernetes/blob/master/conf.yaml
+    wget https://gitlab.inria.fr/msimonin/enos-kubernetes/raw/master/conf.yaml
 
 Deploy on g5k::
 
