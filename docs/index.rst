@@ -1,6 +1,9 @@
 Welcome to enos-kubernetes' documentation!
 ==========================================
 
+Deploys Kubernetes on various providers. Deployments are for
+evaluation/experimental purpose (not production).
+
 .. hint ::
 
     The source code is available at
