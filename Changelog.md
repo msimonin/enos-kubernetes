@@ -1,3 +1,7 @@
+# 1.0.2
+
+- Cosmetics (badges)
+
 # 1.0.1
 
 - Cosmetics

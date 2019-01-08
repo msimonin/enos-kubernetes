@@ -1,5 +1,7 @@
-enos-kubernetes
+Enos-kubernetes
 ===============
+
+|Build Status| |License| |Pypi|
 
 Deploys Kubernetes on various providers. Deployments are for
 evaluation/experimental purpose (not production).
@@ -64,3 +66,14 @@ Build a base image on g5k::
 Build a base image on vmong5k with an alternative cluster::
 
     ek build vmong5k --cluster=chetemi
+
+
+
+.. |Build Status| image:: https://gitlab.inria.fr/msimonin/enos-Kubernetes/badges/master/pipeline.svg
+   :target: https://gitlab.inria.fr/msimonin/enos-kubernetes/pipelines
+
+.. |License| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
+   :target: https://www.gnu.org/licenses/gpl-3.0
+
+.. |Pypi| image:: https://badge.fury.io/py/enos-kubernetes.svg
+   :target: https://badge.fury.io/py/enos-kubernetes
