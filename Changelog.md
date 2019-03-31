@@ -1,3 +1,8 @@
+# 1.0.6
+
+- Update to kubespray 2.8.3
+- Launch post_install at the end of deploy
+
 # 1.0.5
 
 - Cosmetics (API example)
