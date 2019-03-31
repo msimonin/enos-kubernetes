@@ -1,5 +1,6 @@
 import click
 import logging
+import os
 import yaml
 
 import enos_kubernetes.tasks as t
@@ -25,12 +26,17 @@ def load_config(file_path):
     return configuration
 
 
-def load_build_conf(provider, cluster=DEFAULT_BUILD_CLUSTER):
+def load_build_conf(provider, cluster=DEFAULT_BUILD_CLUSTER, working_dir=None):
     conf = load_config(BUILD_CONF_PATH)
     # yeah, that smells
     provider_conf = conf[provider]
     if provider == "g5k" or provider == "vmong5k":
         provider_conf["resources"]["machines"][0]["cluster"] = cluster
+    if provider == "vmong5k":
+        if working_dir is None:
+            # force the working_dir
+            working_dir = os.path.join(os.getcwd(), "working_dir")
+            provider_conf["working_dir"] = working_dir
     return conf
 
 
@@ -127,8 +133,10 @@ def reset(env):
 def deploy(provider, force, conf, env):
     config = load_config(conf)
     t.PROVIDERS[provider](config, force, env=env)
-    t.inventory()
+    t.inventory(env=env)
     t.prepare(env=env)
+    t.post_install(env=env)
+    t.hints(env=env)
 
 
 @cli.command(help="Preconfigure a machine with all the dependency. only vmong5k for now")
@@ -142,5 +150,3 @@ def build(provider, cluster):
     t.inventory()
     t.prepare()
     t.reset()
-    print("To save the environment, you still need to retrieve the base disk \n"
-          "That depends on the provider")
