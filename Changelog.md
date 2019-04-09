@@ -1,3 +1,7 @@
+# 1.0.7
+
+- Update prometheus operator to stable helm
+
 # 1.0.6
 
 - Update to kubespray 2.8.3
