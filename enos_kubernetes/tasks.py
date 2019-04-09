@@ -171,7 +171,7 @@ def hints(**kwargs):
                  "/proxy/#!/login".format(master))
 
     hints.append("Grafana dashboard: http://{}:8001/api/v1/namespaces/"
-                 "monitoring/services/kube-prometheus-grafana:80"
+                 "monitoring/services/prometheus-operator-grafana:80"
                  "/proxy/#!/login".format(master))
 
     for hint in hints:
