@@ -1,3 +1,7 @@
+# 1.0.8
+
+- Fix grafana hints
+
 # 1.0.7
 
 - Update prometheus operator to stable helm
