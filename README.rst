@@ -47,6 +47,13 @@ Install the project::
     source venv/bin/activate
     pip install enos-kubernetes
 
+Configure the Grid5000 REST API access::
+
+    echo '
+    username: MYLOGIN
+    password: MYPASSWORD
+    ' > ~/.python-grid5000.yaml
+
 Get a sample configuration file at::
 
     wget https://gitlab.inria.fr/msimonin/enos-kubernetes/raw/master/conf.yaml
