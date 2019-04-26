@@ -113,7 +113,7 @@ def prepare(**kwargs):
     logger.info("Cloning Kubespray repository...")
     check_call("git clone -b {ref} --depth 1 --single-branch --quiet {url} {dest}".format(
         ref=KUBESPRAY_VERSION,
-        url=KUBESPRAY_URL, 
+        url=KUBESPRAY_URL,
         dest=kspray_path),
         shell=True)
 

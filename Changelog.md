@@ -1,3 +1,7 @@
+# 1.0.9
+
+- Update to Kubespray 2.9.0
+
 # 1.0.8
 
 - Fix grafana hints
