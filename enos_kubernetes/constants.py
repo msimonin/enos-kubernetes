@@ -10,8 +10,8 @@ CONF = os.path.join(os.getcwd(), "conf.yaml")
 KUBESPRAY_VENV = os.path.join(os.getcwd(), "current", "kubespray-venv")
 KUBESPRAY_PATH = "kubespray"
 
-KUBESPRAY_URL = "https://github.com/kubernetes-sigs/kubespray.git" 
-KUBESPRAY_VERSION = "v2.9.0"
+KUBESPRAY_URL = "https://github.com/kubernetes-sigs/kubespray.git"
+KUBESPRAY_VERSION = "v2.10.0"
 
 # Enforce this defaut parameters if they are not given as variable in the
 # configuration
