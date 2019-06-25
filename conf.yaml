@@ -22,13 +22,13 @@ g5k:
   resources:
     machines:
       - roles: [kube-node, k8s-cluster]
-        cluster: dahu
+        cluster: parapluie
         nodes: 5
         min: 1
         primary_network: n1
         secondary_networks: []
       - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
-        cluster: dahu
+        cluster: parapluie
         nodes: 1
         min: 1
         primary_network: n1
@@ -37,7 +37,7 @@ g5k:
       - id: n1
         type: prod
         roles: ["my_network"]
-        site: grenoble
+        site: rennes
 vmong5k:
   walltime: 03:00:00
   job_name: enos-kubernetes-vms
@@ -52,4 +52,17 @@ vmong5k:
         flavour_desc :
           core: 16
           mem: 12288
+    networks: ["my_network"]
+chameleon:
+  walltime: 02:00:00
+  key_name: enos_matt
+  lease_name: kubernetes
+  resources:
+    machines:
+      - roles: [etcd, kube-master, kube-ingress, vault, k8s-cluster]
+        flavour: compute_skylake
+        number: 1
+      - roles: [kube-node, k8s-cluster]
+        flavour: compute_skylake
+        number: 3
     networks: ["my_network"]

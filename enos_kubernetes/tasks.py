@@ -6,6 +6,8 @@ from enoslib.infra.enos_vagrant.configuration import Configuration as VagrantCon
 from enoslib.infra.enos_vagrant.provider import Enos_vagrant
 from enoslib.infra.enos_vmong5k.configuration import Configuration as VMonG5kConf
 from enoslib.infra.enos_vmong5k.provider import VMonG5k
+from enoslib.infra.enos_chameleonbaremetal.provider import Chameleonbaremetal as Cb
+from enoslib.infra.enos_chameleonbaremetal.configuration import Configuration as CbConf
 import logging
 import os
 from subprocess import check_call
@@ -82,6 +84,18 @@ def vmong5k(config, force, env=None, **kwargs):
     env["roles"] = roles
     env["networks"] = networks
     env["context"] = "vmong5k"
+
+
+
+@enostask(new=True)
+def chameleon(config, force, env=None, **kwargs):
+    conf = CbConf.from_dictionnary(config["chameleon"])
+    provider = Cb(conf)
+    roles, networks = provider.init(force_deploy=force)
+    env["config"] = config
+    env["roles"] = roles
+    env["networks"] = networks
+    env["context"] = "chameleon"
 
 
 @enostask()
@@ -209,7 +223,8 @@ def destroy(**kwargs):
 PROVIDERS = {
     "g5k": g5k,
     "vagrant": vagrant,
-    "vmong5k": vmong5k
+    "vmong5k": vmong5k,
+    "chameleon": chameleon
     #    "static": static
     #    "chameleon": chameleon
 }

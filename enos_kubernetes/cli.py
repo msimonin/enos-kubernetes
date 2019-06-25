@@ -69,6 +69,20 @@ def vagrant(force, conf, env):
     t.vagrant(config, force, env=env)
 
 
+@cli.command(help="Claim resources on chameleon.")
+@click.option("--force",
+              is_flag=True,
+              help="force redeployment")
+@click.option("--conf",
+              default=CONF,
+              help="alternative configuration file")
+@click.option("--env",
+              help="alternative environment directory")
+def chameleon(force, conf, env):
+    config = load_config(conf)
+    t.chameleon(config, force, env=env)
+
+
 @cli.command(help="Generate the Ansible inventory [after g5k or vagrant].")
 @click.option("--env",
               help="alternative environment directory")
