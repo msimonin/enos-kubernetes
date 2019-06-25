@@ -1,3 +1,9 @@
+# 1.0.11
+
+* Use Kubespray from latest stable (2.10)
+* Add Chameleon provider
+* Update EnOSlib dep
+
 # 1.0.10
 
 * Update to Kubespray 2.10.0
