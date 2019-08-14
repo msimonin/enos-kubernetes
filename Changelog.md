@@ -1,3 +1,7 @@
+# 1.0.12
+
+* Add build_conf.yml in the distribution
+
 # 1.0.11
 
 * Use Kubespray from latest stable (2.10)
