@@ -1,6 +1,10 @@
-# 1.0.12
+# 1.1.1
 
 * Add build_conf.yml in the distribution
+
+# 1.1.0
+
+* .
 
 # 1.0.11
 
