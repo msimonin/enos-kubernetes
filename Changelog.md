@@ -1,3 +1,9 @@
+# 1.2.1
+
+* Update to Kubespray 2.12.0
+    - disable nodelocaldns for now
+* Implement destroy
+
 # 1.1.1
 
 * Add build_conf.yml in the distribution

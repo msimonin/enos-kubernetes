@@ -23,7 +23,7 @@ g5k:
     machines:
       - roles: [kube-node, k8s-cluster]
         cluster: parapluie
-        nodes: 5
+        nodes: 1
         min: 1
         primary_network: n1
         secondary_networks: []

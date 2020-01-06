@@ -62,6 +62,7 @@ def g5k(config, force, env=None, **kwargs):
     env["roles"] = roles
     env["networks"] = networks
     env["context"] = "g5k"
+    env["provider"] = provider
 
 
 @enostask(new=True)
@@ -73,6 +74,7 @@ def vagrant(config, force, env=None, **kwargs):
     env["roles"] = roles
     env["networks"] = networks
     env["context"] = "vagrant"
+    env["provider"] = provider
 
 
 @enostask(new=True)
@@ -84,7 +86,7 @@ def vmong5k(config, force, env=None, **kwargs):
     env["roles"] = roles
     env["networks"] = networks
     env["context"] = "vmong5k"
-
+    env["provider"] = provider
 
 
 @enostask(new=True)
@@ -96,6 +98,7 @@ def chameleon(config, force, env=None, **kwargs):
     env["roles"] = roles
     env["networks"] = networks
     env["context"] = "chameleon"
+    env["provider"] = provider
 
 
 @enostask()
@@ -124,7 +127,7 @@ def prepare(**kwargs):
     logger.info("Remove previous Kubespray installation")
     check_call("rm -rf %s" % kspray_path, shell=True)
 
-    logger.info("Cloning Kubespray repository...")
+    logger.info("Cloning Kubespray rekubernetes-dashboard-7fc94b7fc5-ff5rqpository...")
     check_call("git clone -b {ref} --depth 1 --single-branch --quiet {url} {dest}".format(
         ref=KUBESPRAY_VERSION,
         url=KUBESPRAY_URL,
@@ -216,8 +219,8 @@ def reset(**kwargs):
 @enostask()
 def destroy(**kwargs):
     env = kwargs["env"]
-    run_ansible([os.path.join(ANSIBLE_DIR, "post_install.yml")],
-                env["inventory"], extra_vars=extra_vars)
+    provider = env["provider"]
+    provider.destroy()
 
 
 PROVIDERS = {
