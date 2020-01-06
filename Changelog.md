@@ -1,4 +1,4 @@
-# 1.2.1
+# 1.2.0
 
 * Update to Kubespray 2.12.0
     - disable nodelocaldns for now
