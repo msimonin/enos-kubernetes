@@ -3,14 +3,6 @@
 # https://hub.docker.com/r/library/python/tags/
 image: python:3.6
 
-python3.5:
-    image: python:3.5
-    stage: test
-    tags: [qlf-ci.inria.fr]
-    script:
-    - pip install tox
-    - tox -e py35 pep8
-
 python3.6:
     image: python:3.6
     stage: test
