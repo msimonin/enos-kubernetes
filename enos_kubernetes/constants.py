@@ -1,4 +1,3 @@
-
 import os
 
 ROOT_PATH = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
@@ -22,7 +21,7 @@ DEFAULT_K_VARS = {
     # since 2.9.0
     "dashboard_skip_login": True,
     # fix a transient bug (unreferenced for now)
-    "enable_nodelocaldns": False
+    "enable_nodelocaldns": False,
 }
 
 BUILD_CONF_PATH = os.path.join(ROOT_PATH, "build_conf.yml")

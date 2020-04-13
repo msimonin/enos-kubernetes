@@ -3,22 +3,29 @@
 # https://hub.docker.com/r/library/python/tags/
 image: python:3.6
 
+before_script:
+- pip install tox
+
 python3.6:
-    image: python:3.6
     stage: test
     tags: [qlf-ci.inria.fr]
     script:
-    - pip install tox
-    - tox -e py36 pep8
+    - tox -e py36
 
-#### Entering th release zone
+pep8:
+    stage: test
+    tags: [qlf-ci.inria.fr]
+    script:
+    - tox -e pep8
+
+
+#### Entering the release zone
 pages:
     stage: deploy
     tags: [qlf-ci.inria.fr]
-    only: 
+    only:
     - tags
     script:
-    - pip install tox
     - tox -e docs
     - mkdir -p public/
     - cp -r docs/_build/html/* public/

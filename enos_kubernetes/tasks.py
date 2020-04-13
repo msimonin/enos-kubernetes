@@ -1,4 +1,4 @@
-from enoslib.api import generate_inventory, run_ansible, run_command
+from enoslib.api import generate_inventory, run_ansible
 from enoslib.task import enostask
 from enoslib.infra.enos_g5k.configuration import Configuration as G5kConf
 from enoslib.infra.enos_g5k.provider import G5k
@@ -13,12 +13,14 @@ import os
 from subprocess import check_call
 import yaml
 
-from enos_kubernetes.constants import (ANSIBLE_DIR,
-                                       KUBESPRAY_URL,
-                                       KUBESPRAY_VERSION,
-                                       KUBESPRAY_VENV,
-                                       KUBESPRAY_PATH,
-                                       DEFAULT_K_VARS)
+from enos_kubernetes.constants import (
+    ANSIBLE_DIR,
+    KUBESPRAY_URL,
+    KUBESPRAY_VERSION,
+    KUBESPRAY_VENV,
+    KUBESPRAY_PATH,
+    DEFAULT_K_VARS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +37,11 @@ def check_call_in_venv(venv_dir, cmd):
     logger.info("[%s] %s" % (venv_dir, cmd))
     cmd_in_venv = []
     cmd_in_venv.append(". %s/bin/activate " % venv_dir)
-    cmd_in_venv.append('&&')
+    cmd_in_venv.append("&&")
     cmd_in_venv.append(cmd)
     check_venv(venv_dir)
 
-    return check_call(' '.join(cmd_in_venv), shell=True)
+    return check_call(" ".join(cmd_in_venv), shell=True)
 
 
 def in_kubespray(cmd):
@@ -115,36 +117,33 @@ def prepare(**kwargs):
     env = kwargs["env"]
 
     # common tasks
-    extra_vars = {
-        "enos_action": "deploy",
-        "context": env["context"]
-    }
-    run_ansible([os.path.join(ANSIBLE_DIR, "site.yml")],
-                env["inventory"], extra_vars=extra_vars)
+    extra_vars = {"enos_action": "deploy", "context": env["context"]}
+    run_ansible(
+        [os.path.join(ANSIBLE_DIR, "site.yml")], env["inventory"], extra_vars=extra_vars
+    )
 
-    kspray_path = os.path.join(env['resultdir'], KUBESPRAY_PATH)
+    kspray_path = os.path.join(env["resultdir"], KUBESPRAY_PATH)
 
     logger.info("Remove previous Kubespray installation")
     check_call("rm -rf %s" % kspray_path, shell=True)
 
     logger.info("Cloning Kubespray rekubernetes-dashboard-7fc94b7fc5-ff5rqpository...")
-    check_call("git clone -b {ref} --depth 1 --single-branch --quiet {url} {dest}".format(
-        ref=KUBESPRAY_VERSION,
-        url=KUBESPRAY_URL,
-        dest=kspray_path),
-        shell=True)
+    check_call(
+        "git clone -b {ref} --depth 1 --single-branch --quiet {url} {dest}".format(
+            ref=KUBESPRAY_VERSION, url=KUBESPRAY_URL, dest=kspray_path
+        ),
+        shell=True,
+    )
 
     in_kubespray("cd %s && pip install -r requirements.txt" % kspray_path)
-    kspray_inventory_path = os.path.join(kspray_path,
-                                         "inventory",
-                                         "mycluster",
-                                         "hosts.ini")
+    kspray_inventory_path = os.path.join(
+        kspray_path, "inventory", "mycluster", "hosts.ini"
+    )
 
-    in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" %
-                 kspray_path)
-    in_kubespray("cd %s && cp %s %s" % (kspray_path,
-                                        env["inventory"],
-                                        kspray_inventory_path))
+    in_kubespray("cd %s && cp -rfp inventory/sample inventory/mycluster" % kspray_path)
+    in_kubespray(
+        "cd %s && cp %s %s" % (kspray_path, env["inventory"], kspray_inventory_path)
+    )
 
     k_vars = env["config"].get("vars", {})
     update_k_vars(k_vars)
@@ -153,22 +152,25 @@ def prepare(**kwargs):
     with open(extra_vars_file, "w") as f:
         f.write(yaml.dump(env["config"].get("vars", {})))
 
-    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini"
-                 " "
-                 "cluster.yml -e @%s" % (kspray_path, extra_vars_file))
+    in_kubespray(
+        "cd %s && ansible-playbook -i inventory/mycluster/hosts.ini"
+        " "
+        "cluster.yml -e @%s" % (kspray_path, extra_vars_file)
+    )
 
 
 @enostask()
 def post_install(**kwargs):
     env = kwargs["env"]
-    extra_vars = {
-        "enos_action": "post-install"
-    }
+    extra_vars = {"enos_action": "post-install"}
     # Adding the k vars
     extra_vars.update(env["config"].get("vars", {}))
 
-    run_ansible([os.path.join(ANSIBLE_DIR, "post_install.yml")],
-                env["inventory"], extra_vars=extra_vars)
+    run_ansible(
+        [os.path.join(ANSIBLE_DIR, "post_install.yml")],
+        env["inventory"],
+        extra_vars=extra_vars,
+    )
 
 
 @enostask()
@@ -176,20 +178,28 @@ def hints(**kwargs):
     env = kwargs["env"]
     master = env["roles"]["kube-master"][0].address
     hints = []
-    hints.append("dashboard url : https://{}:6443/api/v1/namespaces/"
-                 "kube-system/services/https:kubernetes-dashboard:/"
-                 "proxy/#!/login".format(master))
+    hints.append(
+        "dashboard url : https://{}:6443/api/v1/namespaces/"
+        "kube-system/services/https:kubernetes-dashboard:/"
+        "proxy/#!/login".format(master)
+    )
 
-    hints.append("start the proxy on {} : kubectl proxy --address='0.0.0.0'"
-                 "--accept-hosts='.*'".format(master))
+    hints.append(
+        "start the proxy on {} : kubectl proxy --address='0.0.0.0'"
+        "--accept-hosts='.*'".format(master)
+    )
 
-    hints.append("dashboard url proxy : http://{}:8001/api/v1/namespaces/"
-                 "kube-system/services/https:kubernetes-dashboard:"
-                 "/proxy/#!/login".format(master))
+    hints.append(
+        "dashboard url proxy : http://{}:8001/api/v1/namespaces/"
+        "kube-system/services/https:kubernetes-dashboard:"
+        "/proxy/#!/login".format(master)
+    )
 
-    hints.append("Grafana dashboard: http://{}:8001/api/v1/namespaces/"
-                 "monitoring/services/prometheus-operator-grafana:80"
-                 "/proxy/#!/login".format(master))
+    hints.append(
+        "Grafana dashboard: http://{}:8001/api/v1/namespaces/"
+        "monitoring/services/prometheus-operator-grafana:80"
+        "/proxy/#!/login".format(master)
+    )
 
     for hint in hints:
         print("{:->80}".format(""))
@@ -201,19 +211,21 @@ def hints(**kwargs):
 @enostask()
 def backup(**kwargs):
     env = kwargs["env"]
-    extra_vars = {
-        "enos_action": "backup"
-    }
-    run_ansible([os.path.join(ANSIBLE_DIR, "site.yml")],
-                env["inventory"], extra_vars=extra_vars)
+    extra_vars = {"enos_action": "backup"}
+    run_ansible(
+        [os.path.join(ANSIBLE_DIR, "site.yml")], env["inventory"], extra_vars=extra_vars
+    )
+
 
 @enostask()
 def reset(**kwargs):
     env = kwargs["env"]
-    kspray_path = os.path.join(env['resultdir'], KUBESPRAY_PATH)
-    in_kubespray("cd %s && ansible-playbook -i inventory/mycluster/hosts.ini"
-                 " "
-                 "reset.yml" % (kspray_path))
+    kspray_path = os.path.join(env["resultdir"], KUBESPRAY_PATH)
+    in_kubespray(
+        "cd %s && ansible-playbook -i inventory/mycluster/hosts.ini"
+        " "
+        "reset.yml" % (kspray_path)
+    )
 
 
 @enostask()
