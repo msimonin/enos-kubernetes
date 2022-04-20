@@ -127,7 +127,7 @@ def prepare(**kwargs):
     logger.info("Remove previous Kubespray installation")
     check_call("rm -rf %s" % kspray_path, shell=True)
 
-    logger.info("Cloning Kubespray rekubernetes-dashboard-7fc94b7fc5-ff5rqpository...")
+    logger.info("Cloning Kubespray repository...")
     check_call(
         "git clone -b {ref} --depth 1 --single-branch --quiet {url} {dest}".format(
             ref=KUBESPRAY_VERSION, url=KUBESPRAY_URL, dest=kspray_path
