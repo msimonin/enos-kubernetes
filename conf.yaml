@@ -2,7 +2,7 @@
 vars: {}
 vagrant:
   backend: libvirt
-  box: generic/debian9
+  box: generic/debian11
   resources:
     machines:
       - roles: [kube-node, k8s-cluster]
@@ -15,7 +15,6 @@ vagrant:
       - cidr: 172.16.42.0/16
         roles: [n1]
 g5k:
-  env_name: debian9-x64-base
   walltime: 03:00:00
   job_type: allow_classic_ssh
   job_name: enos-kubernetes
@@ -41,9 +40,7 @@ g5k:
 vmong5k:
   walltime: 03:00:00
   job_name: enos-kubernetes-vms
-  image: "/grid5000/virt-images/debian9-x64-std-2019040916.qcow2"
-  gateway: access.grid5000.fr
-  gateway_user: msimonin
+  image: "/grid5000/virt-images/debian11-x64-big-2022041914.qcow2"
   resources:
     machines:
       - roles: [kube-node, k8s-cluster, etcd, kube-master, kube-ingress, vault]
