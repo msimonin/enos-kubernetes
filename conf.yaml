@@ -22,13 +22,13 @@ g5k:
   resources:
     machines:
       - roles: [kube-node, k8s-cluster]
-        cluster: parapluie
+        cluster: paravance
         nodes: 1
         min: 1
         primary_network: n1
         secondary_networks: []
       - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
-        cluster: parapluie
+        cluster: paravance
         nodes: 1
         min: 1
         primary_network: n1
