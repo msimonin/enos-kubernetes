@@ -6,6 +6,15 @@
     src: dashboard/admin-serviceaccount.yaml
     dest: admin-serviceaccount.yaml
 
+- name: Wait for kube-apiserver
+  uri:
+    url: "https://localhost:6443/healthz"
+    validate_certs: no
+  register: result
+  until: result.status == 200
+  retries: 60
+  delay: 1
+
 - name: Creating the RBAC rules for the dashboard
   shell: >
     kubectl get clusterrolebinding kubernetes-dashboard || kubectl create -f admin-serviceaccount.yaml
