@@ -18,6 +18,7 @@ DEFAULT_K_VARS = {
     "kubelet_max_pods": 100,
     "helm_enabled": True,
     "etcd_deployment_type": "docker",
+    "dashboard_enabled": True,
     # since 2.9.0
     "dashboard_skip_login": True,
     # Since 2.18.0
