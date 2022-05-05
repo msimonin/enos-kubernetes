@@ -176,7 +176,7 @@ def post_install(**kwargs):
 @enostask()
 def hints(**kwargs):
     env = kwargs["env"]
-    master = env["roles"]["kube-master"][0].address
+    master = env["roles"]["kube_control_plane"][0].address
     hints = []
     hints.append(
         "dashboard url : https://{}:6443/api/v1/namespaces/"

@@ -5,10 +5,10 @@ vagrant:
   box: generic/debian11
   resources:
     machines:
-      - roles: [kube-node, k8s-cluster]
+      - roles: [kube_node, k8s_cluster]
         flavour: medium
         number: 1
-      - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
+      - roles: [etcd, kube_control_plane, kube_ingress, k8s_cluster, vault]
         flavour: large
         number: 1
     networks:
@@ -20,13 +20,13 @@ g5k:
   job_name: enos-kubernetes
   resources:
     machines:
-      - roles: [kube-node, k8s-cluster]
+      - roles: [kube_node, k8s_cluster]
         cluster: paravance
         nodes: 1
         min: 1
         primary_network: n1
         secondary_networks: []
-      - roles: [etcd, kube-master, kube-ingress, k8s-cluster, vault]
+      - roles: [etcd, kube_control_plane, kube_ingress, k8s_cluster, vault]
         cluster: paravance
         nodes: 1
         min: 1
@@ -43,7 +43,7 @@ vmong5k:
   image: "/grid5000/virt-images/debian11-x64-big-2022041914.qcow2"
   resources:
     machines:
-      - roles: [kube-node, k8s-cluster, etcd, kube-master, kube-ingress, vault]
+      - roles: [kube_node, k8s_cluster, etcd, kube_control_plane, kube_ingress, vault]
         cluster: dahu
         number: 1
         flavour_desc :
@@ -56,10 +56,10 @@ chameleon:
   lease_name: kubernetes
   resources:
     machines:
-      - roles: [etcd, kube-master, kube-ingress, vault, k8s-cluster]
+      - roles: [etcd, kube_control_plane, kube_ingress, vault, k8s_cluster]
         flavour: compute_skylake
         number: 1
-      - roles: [kube-node, k8s-cluster]
+      - roles: [kube_node, k8s_cluster]
         flavour: compute_skylake
         number: 3
     networks: ["my_network"]

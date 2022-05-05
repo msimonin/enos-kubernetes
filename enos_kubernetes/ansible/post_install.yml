@@ -2,7 +2,7 @@
 - name: Post-install
   # Roles defined in the resource section of the configuration file can be used
   # here
-  hosts: kube-master
+  hosts: kube_control_plane
   roles:
     - post_install
 

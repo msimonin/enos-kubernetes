@@ -6,7 +6,7 @@ vmong5k:
   strategy: copy
   resources:
     machines:
-      - roles: [kube-node, k8s-cluster, etcd, kube-master, kube-ingress, vault]
+      - roles: [kube_node, k8s_cluster, etcd, kube_control_plane, kube_ingress, vault]
         cluster: paravance
         number: 1
         flavour_desc :
@@ -19,7 +19,7 @@ g5k:
   job_name: enos-kubernetes-build-g5k
   resources:
     machines:
-      - roles: [kube-node, k8s-cluster, etcd, kube-master, kube-ingress, vault]
+      - roles: [kube_node, k8s_cluster, etcd, kube_control_plane, kube_ingress, vault]
         cluster: paravance
         nodes: 1
         min: 1
