@@ -5,8 +5,9 @@
 
 - name: Install pip
   apt:
-    name: python-pip
+    name: python3-pip
     state: present
+    update_cache: yes
 
 - name: Install Openshift client (for k8s module)
   pip:

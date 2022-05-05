@@ -1,2 +1,2 @@
 ---
-master: "{{ groups['kube-master'][0] }}"
+master: "{{ groups['kube_control_plane'][0] }}"

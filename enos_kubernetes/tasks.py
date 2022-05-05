@@ -6,8 +6,6 @@ from enoslib.infra.enos_vagrant.configuration import Configuration as VagrantCon
 from enoslib.infra.enos_vagrant.provider import Enos_vagrant
 from enoslib.infra.enos_vmong5k.configuration import Configuration as VMonG5kConf
 from enoslib.infra.enos_vmong5k.provider import VMonG5k
-from enoslib.infra.enos_chameleonbaremetal.provider import Chameleonbaremetal as Cb
-from enoslib.infra.enos_chameleonbaremetal.configuration import Configuration as CbConf
 import logging
 import os
 from subprocess import check_call
@@ -93,8 +91,10 @@ def vmong5k(config, force, env=None, **kwargs):
 
 @enostask(new=True)
 def chameleon(config, force, env=None, **kwargs):
-    conf = CbConf.from_dictionnary(config["chameleon"])
-    provider = Cb(conf)
+    from enoslib.infra.enos_chameleonbaremetal.provider import Chameleonbaremetal
+    from enoslib.infra.enos_chameleonbaremetal.configuration import Configuration
+    conf = Configuration.from_dictionnary(config["chameleon"])
+    provider = Chameleonbaremetal(conf)
     roles, networks = provider.init(force_deploy=force)
     env["config"] = config
     env["roles"] = roles
@@ -127,7 +127,7 @@ def prepare(**kwargs):
     logger.info("Remove previous Kubespray installation")
     check_call("rm -rf %s" % kspray_path, shell=True)
 
-    logger.info("Cloning Kubespray rekubernetes-dashboard-7fc94b7fc5-ff5rqpository...")
+    logger.info("Cloning Kubespray repository...")
     check_call(
         "git clone -b {ref} --depth 1 --single-branch --quiet {url} {dest}".format(
             ref=KUBESPRAY_VERSION, url=KUBESPRAY_URL, dest=kspray_path
@@ -176,7 +176,7 @@ def post_install(**kwargs):
 @enostask()
 def hints(**kwargs):
     env = kwargs["env"]
-    master = env["roles"]["kube-master"][0].address
+    master = env["roles"]["kube_control_plane"][0].address
     hints = []
     hints.append(
         "dashboard url : https://{}:6443/api/v1/namespaces/"
@@ -197,7 +197,7 @@ def hints(**kwargs):
 
     hints.append(
         "Grafana dashboard: http://{}:8001/api/v1/namespaces/"
-        "monitoring/services/prometheus-operator-grafana:80"
+        "monitoring/services/kube-prometheus-stack-grafana:80"
         "/proxy/#!/login".format(master)
     )
 
