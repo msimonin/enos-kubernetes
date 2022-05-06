@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 en.init_logging()
 
+
 def check_call_in_venv(venv_dir, cmd):
     """Calls command in a specific virtualenv."""
 
