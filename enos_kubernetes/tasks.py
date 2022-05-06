@@ -1,15 +1,9 @@
-from enoslib.api import generate_inventory, run_ansible
-from enoslib.task import enostask
-from enoslib.infra.enos_g5k.configuration import Configuration as G5kConf
-from enoslib.infra.enos_g5k.provider import G5k
-from enoslib.infra.enos_vagrant.configuration import Configuration as VagrantConf
-from enoslib.infra.enos_vagrant.provider import Enos_vagrant
-from enoslib.infra.enos_vmong5k.configuration import Configuration as VMonG5kConf
-from enoslib.infra.enos_vmong5k.provider import VMonG5k
 import logging
 import os
 from subprocess import check_call
 import yaml
+
+import enoslib as en
 
 from enos_kubernetes.constants import (
     ANSIBLE_DIR,
@@ -22,6 +16,7 @@ from enos_kubernetes.constants import (
 
 logger = logging.getLogger(__name__)
 
+en.init_logging()
 
 def check_call_in_venv(venv_dir, cmd):
     """Calls command in a specific virtualenv."""
@@ -53,10 +48,10 @@ def update_k_vars(k_vars):
             k_vars[k] = v
 
 
-@enostask(new=True)
+@en.enostask(new=True)
 def g5k(config, force, env=None, **kwargs):
-    conf = G5kConf.from_dictionnary(config["g5k"])
-    provider = G5k(conf)
+    conf = en.G5kConf.from_dictionnary(config["g5k"])
+    provider = en.G5k(conf)
     roles, networks = provider.init(force_deploy=force)
     env["config"] = config
     env["roles"] = roles
@@ -65,10 +60,10 @@ def g5k(config, force, env=None, **kwargs):
     env["provider"] = provider
 
 
-@enostask(new=True)
+@en.enostask(new=True)
 def vagrant(config, force, env=None, **kwargs):
-    conf = VagrantConf.from_dictionnary(config["vagrant"])
-    provider = Enos_vagrant(conf)
+    conf = en.VagrantConf.from_dictionnary(config["vagrant"])
+    provider = en.Enos_vagrant(conf)
     roles, networks = provider.init(force_deploy=force)
     env["config"] = config
     env["roles"] = roles
@@ -77,10 +72,10 @@ def vagrant(config, force, env=None, **kwargs):
     env["provider"] = provider
 
 
-@enostask(new=True)
+@en.enostask(new=True)
 def vmong5k(config, force, env=None, **kwargs):
-    conf = VMonG5kConf.from_dictionnary(config["vmong5k"])
-    provider = VMonG5k(conf)
+    conf = en.VMonG5kConf.from_dictionnary(config["vmong5k"])
+    provider = en.VMonG5k(conf)
     roles, networks = provider.init(force_deploy=force)
     env["config"] = config
     env["roles"] = roles
@@ -89,7 +84,7 @@ def vmong5k(config, force, env=None, **kwargs):
     env["provider"] = provider
 
 
-@enostask(new=True)
+@en.enostask(new=True)
 def chameleon(config, force, env=None, **kwargs):
     from enoslib.infra.enos_chameleonbaremetal.provider import Chameleonbaremetal
     from enoslib.infra.enos_chameleonbaremetal.configuration import Configuration
@@ -103,22 +98,22 @@ def chameleon(config, force, env=None, **kwargs):
     env["provider"] = provider
 
 
-@enostask()
+@en.enostask()
 def inventory(**kwargs):
     env = kwargs["env"]
     roles = env["roles"]
     networks = env["networks"]
     env["inventory"] = os.path.join(env["resultdir"], "hosts")
-    generate_inventory(roles, networks, env["inventory"], check_networks=True)
+    en.generate_inventory(roles, networks, env["inventory"], check_networks=True)
 
 
-@enostask()
+@en.enostask()
 def prepare(**kwargs):
     env = kwargs["env"]
 
     # common tasks
     extra_vars = {"enos_action": "deploy", "context": env["context"]}
-    run_ansible(
+    en.run_ansible(
         [os.path.join(ANSIBLE_DIR, "site.yml")], env["inventory"], extra_vars=extra_vars
     )
 
@@ -159,21 +154,21 @@ def prepare(**kwargs):
     )
 
 
-@enostask()
+@en.enostask()
 def post_install(**kwargs):
     env = kwargs["env"]
     extra_vars = {"enos_action": "post-install"}
     # Adding the k vars
     extra_vars.update(env["config"].get("vars", {}))
 
-    run_ansible(
+    en.run_ansible(
         [os.path.join(ANSIBLE_DIR, "post_install.yml")],
         env["inventory"],
         extra_vars=extra_vars,
     )
 
 
-@enostask()
+@en.enostask()
 def hints(**kwargs):
     env = kwargs["env"]
     master = env["roles"]["kube_control_plane"][0].address
@@ -208,16 +203,16 @@ def hints(**kwargs):
         print("{:->80}".format(""))
 
 
-@enostask()
+@en.enostask()
 def backup(**kwargs):
     env = kwargs["env"]
     extra_vars = {"enos_action": "backup"}
-    run_ansible(
+    en.run_ansible(
         [os.path.join(ANSIBLE_DIR, "site.yml")], env["inventory"], extra_vars=extra_vars
     )
 
 
-@enostask()
+@en.enostask()
 def reset(**kwargs):
     env = kwargs["env"]
     kspray_path = os.path.join(env["resultdir"], KUBESPRAY_PATH)
@@ -228,7 +223,7 @@ def reset(**kwargs):
     )
 
 
-@enostask()
+@en.enostask()
 def destroy(**kwargs):
     env = kwargs["env"]
     provider = env["provider"]

@@ -1,12 +1,9 @@
 import click
-import logging
 import os
 import yaml
 
 import enos_kubernetes.tasks as t
 from enos_kubernetes.constants import CONF, BUILD_CONF_PATH, DEFAULT_BUILD_CLUSTER
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 @click.group()
