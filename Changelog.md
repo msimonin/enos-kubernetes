@@ -1,3 +1,8 @@
+# 2.0.0
+
+* Refresh project (Kubespray 2.18)
+* Update to EnOSlib 7
+
 # 1.3.0
 
 * Update to enoslib 5.0.x
