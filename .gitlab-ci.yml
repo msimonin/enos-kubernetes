@@ -1,3 +1,19 @@
+python3.11:
+    stage: test
+    tags: [ci.inria.fr]
+    image: python:3.11
+    script:
+    - pip install tox
+    - tox -e py311
+
+python3.10:
+    stage: test
+    tags: [ci.inria.fr]
+    image: python:3.10
+    script:
+    - pip install tox
+    - tox -e py310
+
 python3.9:
     stage: test
     tags: [ci.inria.fr]
